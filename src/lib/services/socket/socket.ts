@@ -1,10 +1,10 @@
 import { io, ManagerOptions, SocketOptions } from "socket.io-client"
 
 export const createSocketConnection = (
-  uri: string,
   options: Partial<ManagerOptions & SocketOptions> = {
     autoConnect: false,
+    transports: ["websocket"],
   }
-) => io(uri, options)
+) => io("http://localhost:5000/client", options)
 
-export default createSocketConnection
+export default createSocketConnection()

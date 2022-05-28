@@ -29,12 +29,19 @@ import { useTheme } from "styled-components"
 import { HeaderTitle } from "./components/header/HeaderTitle"
 import { IMessage } from "./types/message.type"
 
-export const ChatModal = ({ socket, ...props }: ChatModalProps) => {
+import socket from "../../services/socket/socket"
+import { ChatLead } from "../ChatLead"
+
+export const ChatModal = (props: ChatModalProps) => {
   const [message, setMessage] = useState("")
   const [showEmoji, setShowEmoji] = useState(false)
   const [messages, setMessages] = useState<IMessage[]>([])
+  const [showLead, setShowLead] = useState(true)
+
   const inputRef = useRef<HTMLInputElement | null>(null)
+  const messagesRef = useRef<HTMLUListElement | null>(null)
   const theme = useTheme()
+
   const userId = sessionStorage.getItem("userId") as string
 
   const addEmoji = (_e: MouseEvent<Element>, data: IEmojiData) => {
@@ -51,27 +58,47 @@ export const ChatModal = ({ socket, ...props }: ChatModalProps) => {
     inputRef.current?.focus()
   }
 
+  const scrollToBottom = () => {
+    messagesRef.current?.scrollTo({
+      top: messagesRef.current.scrollHeight,
+      behavior: "smooth",
+    })
+  }
+
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    socket.emit("fake")
-    console.log(socket)
 
     if (message.trim()) {
-      socket.emit("message:send", { message })
+      socket.emit("message:send", { message: message.trim() })
     }
+
+    setShowEmoji(false)
+    setMessage("")
+    inputRef.current?.focus()
+    scrollToBottom()
   }
 
   useEffect(() => {
     socket.emit("messages:getAll")
-  }, [socket])
+  }, [])
+
+  useEffect(() => {
+    scrollToBottom()
+  }, [showLead])
 
   socket.on("messages:sendAll", (dataMessages) => {
-    setMessage(dataMessages)
+    setMessages(dataMessages)
+    scrollToBottom()
   })
 
   socket.on("message:get", (dataMessage) => {
     setMessages([...messages, dataMessage])
+    setTimeout(() => {
+      scrollToBottom()
+    }, 0)
   })
+
+  socket.on("lead:new", () => setShowLead(true))
 
   const pickerStyle = {
     width: "100%",
@@ -86,40 +113,52 @@ export const ChatModal = ({ socket, ...props }: ChatModalProps) => {
         <Avatar size={94} src={theme.avatarDefault} />
         <HeaderTitle>Hi There!</HeaderTitle>
       </CHHeader>
-      <CHMessagesContainer>
-        <CHMessages>
-          {messages.map(({ id, message, from }) => (
-            <CHMessage key={id} isSelf={+userId === from}>
-              <CHMessageInfo isSelf={+userId === from}>{message}</CHMessageInfo>
-            </CHMessage>
-          ))}
-        </CHMessages>
-      </CHMessagesContainer>
-      <CHFooterContainer>
-        {showEmoji && (
-          <Picker
-            onEmojiClick={addEmoji}
-            disableSearchBar
-            disableSkinTonePicker
-            disableAutoFocus
-            pickerStyle={pickerStyle}
-          />
-        )}
-        <CHInputContainer onSubmit={handleSubmit}>
-          <CHInput
-            placeholder='Type'
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            ref={inputRef}
-          />
-          <CHEmoji type='button' onClick={handleShowEmoji}>
-            <EmojiIcon />
-          </CHEmoji>
-          <CHSend type='submit' disabled={!message.trim()}>
-            <SendIcon />
-          </CHSend>
-        </CHInputContainer>
-      </CHFooterContainer>
+      {showLead ? (
+        <ChatLead setShowLead={setShowLead} scrollToBottom={scrollToBottom} />
+      ) : (
+        <>
+          <CHMessagesContainer>
+            <CHMessages ref={messagesRef}>
+              {messages.map(({ id, message, from }) => (
+                <CHMessage key={id} isSelf={+userId === from}>
+                  <CHMessageInfo isSelf={+userId === from}>
+                    {message}
+                  </CHMessageInfo>
+                </CHMessage>
+              ))}
+            </CHMessages>
+          </CHMessagesContainer>
+          <CHFooterContainer>
+            {showEmoji && (
+              <Picker
+                onEmojiClick={addEmoji}
+                disableSearchBar
+                disableSkinTonePicker
+                disableAutoFocus
+                pickerStyle={pickerStyle}
+                preload
+              />
+            )}
+            <CHInputContainer onSubmit={handleSubmit}>
+              <CHInput
+                placeholder='Type'
+                value={message}
+                onChange={(e) => {
+                  setMessage(e.target.value)
+                  scrollToBottom()
+                }}
+                ref={inputRef}
+              />
+              <CHEmoji type='button' onClick={handleShowEmoji}>
+                <EmojiIcon />
+              </CHEmoji>
+              <CHSend type='submit' disabled={!message.trim()}>
+                <SendIcon />
+              </CHSend>
+            </CHInputContainer>
+          </CHFooterContainer>
+        </>
+      )}
     </CHContainer>
   )
 }

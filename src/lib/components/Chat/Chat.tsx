@@ -1,19 +1,12 @@
-import React, { useState } from "react"
-import createSocketConnection from "../../services/socket/socket"
+import React, { useState, MouseEvent } from "react"
+import socket from "../../services/socket/socket"
 import { ChatButton } from "../ChatButton"
 import { ChatProps } from "./types/chat.type"
 import ThemeProvider from "../../Theme/ThemeProvider"
 import { ChatModal } from "../ChatModal"
 import { CHChat } from "./components/Chat"
 
-export const Chat = ({
-  connectionUri,
-  connectionOptions,
-  dealershipOrigin,
-  ...props
-}: ChatProps) => {
-  const socket = createSocketConnection(connectionUri, connectionOptions)
-
+export const Chat = ({ dealershipOrigin, onButtonClick, theme }: ChatProps) => {
   const [showChat, setShowChat] = useState(false)
 
   socket.on("session", ({ sessionId, userId }) => {
@@ -23,23 +16,27 @@ export const Chat = ({
     sessionStorage.setItem("userId", userId)
   })
 
-  const handleClick = () => {
+  const handleClick = (e: MouseEvent<HTMLButtonElement>) => {
     setShowChat((prevShowChat) => !prevShowChat)
 
     socket.auth = {
       origin: dealershipOrigin,
-      sessionId: sessionStorage.getItem("sessionId") || null,
+      sessionId: sessionStorage.getItem("sessionId"),
     }
 
     socket.connect()
 
-    console.log("SS AC MILAN", socket)
+    onButtonClick && onButtonClick(e)
   }
 
+  socket.on("connect_error", (err) => {
+    console.log({ err })
+  })
+
   return (
-    <ThemeProvider>
+    <ThemeProvider theme={theme}>
       <CHChat>
-        {showChat && <ChatModal socket={socket} />}
+        {showChat && <ChatModal />}
         <ChatButton showTimes={showChat} onClick={handleClick} />
       </CHChat>
     </ThemeProvider>

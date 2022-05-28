@@ -13,6 +13,10 @@ export interface IDefaultTheme {
       white: string
       black: string
     }
+    leadInputs: {
+      bg: string
+      color: string
+    }
     primaryGradient: string
   }
   radius: {
@@ -20,6 +24,7 @@ export interface IDefaultTheme {
     input: string
     selfMessage: string
     otherMessage: string
+    leadInput: string
   }
   offset: {
     x: number
@@ -52,6 +57,10 @@ export const defaultTheme: IDefaultTheme = {
       white: "#FFFFFF",
       black: "#101010",
     },
+    leadInputs: {
+      bg: "#EBEDF1",
+      color: "#000000",
+    },
     primaryGradient: "linear-gradient(to right, #0c458f, #3f78c9)",
   },
   radius: {
@@ -59,6 +68,7 @@ export const defaultTheme: IDefaultTheme = {
     input: "7px",
     otherMessage: "30px 30px 30px 0px",
     selfMessage: "30px  0px 30px 30px",
+    leadInput: "27px",
   },
   offset: {
     x: 30,
