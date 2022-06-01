@@ -1,5 +1,5 @@
 import React from "react"
-import { Chat } from "./lib"
+import { Chat } from "hillz_chat"
 
 const App = () => {
   return (
