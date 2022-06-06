@@ -1,1 +1,0 @@
-export declare const CHFooterContainer: import("styled-components").StyledComponent<"div", import("styled-components").DefaultTheme, {}, never>;
