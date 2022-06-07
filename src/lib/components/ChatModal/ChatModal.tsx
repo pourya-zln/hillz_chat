@@ -4,6 +4,8 @@ import React, {
   useEffect,
   useRef,
   useState,
+  useContext,
+  useCallback,
 } from "react"
 import { ChatModalProps } from "./types/chat-modal.type"
 import {
@@ -28,11 +30,11 @@ import { Avatar } from "./components/Avatar"
 import { useTheme } from "styled-components"
 import { HeaderTitle } from "./components/header/HeaderTitle"
 import { IMessage } from "./types/message.type"
-
-import socket from "../../services/socket/socket"
 import { ChatLead } from "../ChatLead"
+import SocketContext from "lib/services/socket"
 
 export const ChatModal = (props: ChatModalProps) => {
+  const socket = useContext(SocketContext)
   const [message, setMessage] = useState("")
   const [showEmoji, setShowEmoji] = useState(false)
   const [messages, setMessages] = useState<IMessage[]>([])
@@ -44,47 +46,53 @@ export const ChatModal = (props: ChatModalProps) => {
 
   const userId = sessionStorage.getItem("userId") as string
 
-  const addEmoji = (_e: MouseEvent<Element>, data: IEmojiData) => {
-    const sym = data.unified.split("-")
-    const codesArray: string[] = []
-    sym.forEach((val) => codesArray.push(`0x${val}`))
-    const emoji = String.fromCodePoint(...(codesArray as any))
-    setMessage(message + emoji)
-    inputRef.current?.focus()
-  }
+  const addEmoji = useCallback(
+    (_e: MouseEvent<Element>, data: IEmojiData) => {
+      const sym = data.unified.split("-")
+      const codesArray: string[] = []
+      sym.forEach((val) => codesArray.push(`0x${val}`))
+      const emoji = String.fromCodePoint(...(codesArray as any))
+      setMessage(message + emoji)
+      inputRef.current?.focus()
+    },
+    [message]
+  )
 
-  const handleShowEmoji = () => {
+  const handleShowEmoji = useCallback(() => {
     setShowEmoji((showEmojiPrev) => !showEmojiPrev)
     inputRef.current?.focus()
-  }
+  }, [])
 
-  const scrollToBottom = () => {
+  const scrollToBottom = useCallback(() => {
     messagesRef.current?.scrollTo({
       top: messagesRef.current.scrollHeight,
       behavior: "smooth",
     })
-  }
+  }, [messagesRef])
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
+  const handleSubmit = useCallback(
+    (e: FormEvent<HTMLFormElement>) => {
+      e.preventDefault()
 
-    if (message.trim()) {
+      if (!message.trim()) return
+
       socket.emit("message:send", { message: message.trim() })
-    }
 
-    setShowEmoji(false)
-    setMessage("")
-    inputRef.current?.focus()
-    scrollToBottom()
-  }
+      setShowEmoji(false)
+      setMessage("")
+      inputRef.current?.focus()
+      scrollToBottom()
+    },
+    [message, scrollToBottom, socket]
+  )
 
   useEffect(() => {
     socket.emit("messages:getAll")
-  }, [])
+  }, [socket])
 
   useEffect(() => {
     scrollToBottom()
-  }, [showLead])
+  }, [scrollToBottom, showLead])
 
   socket.on("messages:sendAll", (dataMessages) => {
     setMessages(dataMessages)
@@ -93,9 +101,7 @@ export const ChatModal = (props: ChatModalProps) => {
 
   socket.on("message:get", (dataMessage) => {
     setMessages([...messages, dataMessage])
-    setTimeout(() => {
-      scrollToBottom()
-    }, 0)
+    setTimeout(scrollToBottom, 0)
   })
 
   socket.on("lead:new", () => setShowLead(true))
