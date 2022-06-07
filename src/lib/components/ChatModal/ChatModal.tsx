@@ -16,7 +16,6 @@ import {
   CHFooterContainer,
 } from "./components/footer"
 import { CHContainer } from "./components/Container"
-import Picker, { IEmojiData } from "emoji-picker-react"
 import { CHHeader } from "./components/header/Header"
 import {
   CHMessage,
@@ -27,23 +26,26 @@ import {
 import { Avatar } from "./components/Avatar"
 import { useTheme } from "styled-components"
 import { HeaderTitle } from "./components/header/HeaderTitle"
-import { IMessage } from "./types/message.type"
 import { ChatLead } from "../ChatLead"
-import SocketContext from "../../services/socket"
+import { SocketContext } from "../../services/socket"
+import Picker, { IEmojiData } from "emoji-picker-react"
+import useChat from "../../hooks/useChat"
 
 export const ChatModal = (props: ChatModalProps) => {
-  const socket = useContext(SocketContext)
+  const userId = sessionStorage.getItem("userId") as string
+
+  // Hooks
+  const { socket } = useContext(SocketContext)
   const [message, setMessage] = useState("")
   const [showEmoji, setShowEmoji] = useState(false)
-  const [messages, setMessages] = useState<IMessage[]>([])
-  const [showLead, setShowLead] = useState(true)
+  const [showLead, setShowLead] = useState(false)
+  const [messages, sendMessage, getAllMessages] = useChat(userId, socket)
 
   const inputRef = useRef<HTMLInputElement | null>(null)
   const messagesRef = useRef<HTMLUListElement | null>(null)
   const theme = useTheme()
 
-  const userId = sessionStorage.getItem("userId") as string
-
+  // Handlers
   const addEmoji = useCallback(
     (_e: MouseEvent<Element>, data: IEmojiData) => {
       const sym = data.unified.split("-")
@@ -74,35 +76,27 @@ export const ChatModal = (props: ChatModalProps) => {
 
       if (!message.trim()) return
 
-      socket.emit("message:send", { message: message.trim() })
+      sendMessage(message)
 
       setShowEmoji(false)
       setMessage("")
       inputRef.current?.focus()
       scrollToBottom()
     },
-    [message, scrollToBottom, socket]
+    [message, scrollToBottom, sendMessage]
   )
 
+  const handleLeadRequest = useCallback(() => setShowLead(true), [])
+
   useEffect(() => {
-    socket.emit("messages:getAll")
-  }, [socket])
+    getAllMessages()
+  }, [getAllMessages])
 
   useEffect(() => {
     scrollToBottom()
-  }, [scrollToBottom, showLead])
+  }, [scrollToBottom, messages])
 
-  socket.on("messages:sendAll", (dataMessages) => {
-    setMessages(dataMessages)
-    scrollToBottom()
-  })
-
-  socket.on("message:get", (dataMessage) => {
-    setMessages([...messages, dataMessage])
-    setTimeout(scrollToBottom, 0)
-  })
-
-  socket.on("lead:new", () => setShowLead(true))
+  socket.on("lead:request", handleLeadRequest)
 
   const pickerStyle = {
     width: "100%",

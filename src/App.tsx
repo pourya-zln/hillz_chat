@@ -1,15 +1,13 @@
 import React from "react"
-import { Chat } from "hillz_chat/dist/lib"
-import SocketContext, { socket } from "hillz_chat/dist/lib/services/socket"
-// import SocketContext, { socket } from "lib/services/socket"
+import SocketProvider from "lib/services/socket"
+import { Chat } from "lib"
 
 const App = () => {
-  console.log("Chat")
   return (
     <div className='App'>
-      <SocketContext.Provider value={socket}>
+      <SocketProvider>
         <Chat dealershipOrigin='localhost:3000' />
-      </SocketContext.Provider>
+      </SocketProvider>
     </div>
   )
 }

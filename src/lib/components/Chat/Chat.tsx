@@ -4,49 +4,48 @@ import { ChatProps } from "./types/chat.type"
 import ThemeProvider from "../../Theme/ThemeProvider"
 import { ChatModal } from "../ChatModal"
 import { CHChat } from "./components/Chat"
-import SocketContext from "../../services/socket"
+import { SocketContext } from "../../services/socket"
 
 export const Chat = ({ dealershipOrigin, onButtonClick, theme }: ChatProps) => {
   const [showChat, setShowChat] = useState(false)
-  const socket = useContext(SocketContext)
+  const { socket, setSocket } = useContext(SocketContext)
 
-  const handleClick = useCallback(
-    (e: MouseEvent<HTMLButtonElement>) => {
-      setShowChat((prevShowChat) => !prevShowChat)
+  const handleClick = (e: MouseEvent<HTMLButtonElement>) => {
+    socket.disconnect()
+    setShowChat((prevShowChat) => !prevShowChat)
 
-      socket.auth = {
-        origin: dealershipOrigin,
-        sessionId: sessionStorage.getItem("sessionId"),
-      }
+    socket.auth = {
+      origin: dealershipOrigin,
+      sessionId: sessionStorage.getItem("sessionId"),
+    }
 
-      socket.connect()
+    setSocket(socket.connect())
 
-      onButtonClick && onButtonClick(e)
-    },
-    [dealershipOrigin, onButtonClick, socket]
-  )
+    onButtonClick && onButtonClick(e)
+  }
 
-  const handleConnectionError = useCallback(
-    (err: Error) => {
-      console.log({ err })
-      socket.removeAllListeners()
-    },
-    [socket]
-  )
-
-  const handleDisconnect = useCallback(() => {
+  const handleConnectionError = (err: Error) => {
+    console.log({ err })
     socket.removeAllListeners()
-  }, [socket])
+  }
 
-  const handleSession = useCallback(
-    ({ sessionId, userId }: { sessionId: number; userId: number }) => {
-      socket.auth = { ...socket.auth, sessionId }
+  const handleDisconnect = () => {
+    socket.removeAllListeners()
+  }
 
-      sessionStorage.setItem("sessionId", `${sessionId}`)
-      sessionStorage.setItem("userId", `${userId}`)
-    },
-    [socket]
-  )
+  const handleSession = ({
+    sessionId,
+    userId,
+  }: {
+    sessionId: number
+    userId: number
+  }) => {
+    console.log(sessionId, userId)
+    socket.auth = { ...socket.auth, sessionId }
+
+    sessionStorage.setItem("sessionId", `${sessionId}`)
+    sessionStorage.setItem("userId", `${userId}`)
+  }
 
   socket.on("session", handleSession)
   socket.on("connect_error", handleConnectionError)
