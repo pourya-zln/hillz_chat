@@ -50,8 +50,6 @@ exports.ChatModal = void 0;
 var react_1 = __importStar(require("react"));
 var footer_1 = require("./components/footer");
 var Container_1 = require("./components/Container");
-var emoji_svg_1 = require("../../assets/emoji.svg");
-var send_svg_1 = require("../../assets/send.svg");
 var emoji_picker_react_1 = __importDefault(require("emoji-picker-react"));
 var Header_1 = require("./components/header/Header");
 var messages_1 = require("./components/messages");
@@ -59,7 +57,7 @@ var Avatar_1 = require("./components/Avatar");
 var styled_components_1 = require("styled-components");
 var HeaderTitle_1 = require("./components/header/HeaderTitle");
 var ChatLead_1 = require("../ChatLead");
-var socket_1 = __importDefault(require("lib/services/socket"));
+var socket_1 = __importDefault(require("../../services/socket"));
 var ChatModal = function (props) {
     var socket = (0, react_1.useContext)(socket_1.default);
     var _a = (0, react_1.useState)(""), message = _a[0], setMessage = _a[1];
@@ -142,9 +140,12 @@ var ChatModal = function (props) {
                             scrollToBottom();
                         }, ref: inputRef }),
                     react_1.default.createElement(footer_1.CHEmoji, { type: 'button', onClick: handleShowEmoji },
-                        react_1.default.createElement(emoji_svg_1.ReactComponent, null)),
+                        react_1.default.createElement("svg", { xmlns: 'http://www.w3.org/2000/svg', width: '29.474', height: '29.474', viewBox: '0 0 29.474 29.474' },
+                            react_1.default.createElement("g", { transform: 'translate(-4 -3)' },
+                                react_1.default.createElement("path", { d: 'M23.895,16.263a2.211,2.211,0,1,0-2.211-2.211A2.208,2.208,0,0,0,23.895,16.263Zm-10.316,0a2.211,2.211,0,1,0-2.211-2.211A2.208,2.208,0,0,0,13.579,16.263Zm5.158,10.316a8.836,8.836,0,0,0,8.326-5.895H10.411A8.836,8.836,0,0,0,18.737,26.579ZM18.729,3A14.737,14.737,0,1,0,33.474,17.737,14.726,14.726,0,0,0,18.729,3Zm.007,27.263c-6.514,0-12.526-6.013-12.526-12.526S12.223,5.211,18.737,5.211s12.526,6.013,12.526,12.526S25.25,30.263,18.737,30.263Z', transform: 'translate(0 0)', fill: '#8793aa' })))),
                     react_1.default.createElement(footer_1.CHSend, { type: 'submit', disabled: !message.trim() },
-                        react_1.default.createElement(send_svg_1.ReactComponent, null))))))));
+                        react_1.default.createElement("svg", { xmlns: 'http://www.w3.org/2000/svg', width: '16', height: '16', viewBox: '0 0 16 16' },
+                            react_1.default.createElement("path", { d: 'M17.534,9.247,3.276,2.078A.844.844,0,0,0,2.082,3.114L4.073,8.451l9.081,1.513L4.073,11.478,2.082,16.814a.807.807,0,0,0,1.195.956L17.534,10.6A.757.757,0,0,0,17.534,9.247Z', transform: 'translate(-2.009 -1.994)', fill: '#fff' })))))))));
 };
 exports.ChatModal = ChatModal;
 exports.default = exports.ChatModal;

@@ -16,8 +16,6 @@ import {
   CHFooterContainer,
 } from "./components/footer"
 import { CHContainer } from "./components/Container"
-import { ReactComponent as EmojiIcon } from "../../assets/emoji.svg"
-import { ReactComponent as SendIcon } from "../../assets/send.svg"
 import Picker, { IEmojiData } from "emoji-picker-react"
 import { CHHeader } from "./components/header/Header"
 import {
@@ -31,7 +29,7 @@ import { useTheme } from "styled-components"
 import { HeaderTitle } from "./components/header/HeaderTitle"
 import { IMessage } from "./types/message.type"
 import { ChatLead } from "../ChatLead"
-import SocketContext from "lib/services/socket"
+import SocketContext from "../../services/socket"
 
 export const ChatModal = (props: ChatModalProps) => {
   const socket = useContext(SocketContext)
@@ -156,10 +154,34 @@ export const ChatModal = (props: ChatModalProps) => {
                 ref={inputRef}
               />
               <CHEmoji type='button' onClick={handleShowEmoji}>
-                <EmojiIcon />
+                <svg
+                  xmlns='http://www.w3.org/2000/svg'
+                  width='29.474'
+                  height='29.474'
+                  viewBox='0 0 29.474 29.474'
+                >
+                  <g transform='translate(-4 -3)'>
+                    <path
+                      d='M23.895,16.263a2.211,2.211,0,1,0-2.211-2.211A2.208,2.208,0,0,0,23.895,16.263Zm-10.316,0a2.211,2.211,0,1,0-2.211-2.211A2.208,2.208,0,0,0,13.579,16.263Zm5.158,10.316a8.836,8.836,0,0,0,8.326-5.895H10.411A8.836,8.836,0,0,0,18.737,26.579ZM18.729,3A14.737,14.737,0,1,0,33.474,17.737,14.726,14.726,0,0,0,18.729,3Zm.007,27.263c-6.514,0-12.526-6.013-12.526-12.526S12.223,5.211,18.737,5.211s12.526,6.013,12.526,12.526S25.25,30.263,18.737,30.263Z'
+                      transform='translate(0 0)'
+                      fill='#8793aa'
+                    />
+                  </g>
+                </svg>
               </CHEmoji>
               <CHSend type='submit' disabled={!message.trim()}>
-                <SendIcon />
+                <svg
+                  xmlns='http://www.w3.org/2000/svg'
+                  width='16'
+                  height='16'
+                  viewBox='0 0 16 16'
+                >
+                  <path
+                    d='M17.534,9.247,3.276,2.078A.844.844,0,0,0,2.082,3.114L4.073,8.451l9.081,1.513L4.073,11.478,2.082,16.814a.807.807,0,0,0,1.195.956L17.534,10.6A.757.757,0,0,0,17.534,9.247Z'
+                    transform='translate(-2.009 -1.994)'
+                    fill='#fff'
+                  />
+                </svg>
               </CHSend>
             </CHInputContainer>
           </CHFooterContainer>

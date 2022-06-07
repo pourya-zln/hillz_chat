@@ -1,11 +1,6 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.defaultTheme = void 0;
-var headerBg_svg_1 = __importDefault(require("../assets/headerBg.svg"));
-var avatar_svg_1 = __importDefault(require("../assets/avatar.svg"));
 var pxToRem = function (value) { return "".concat(value / 16, "rem"); };
 exports.defaultTheme = {
     colors: {
@@ -45,6 +40,6 @@ exports.defaultTheme = {
             lg: pxToRem(45),
         },
     },
-    headerBackgroundURL: headerBg_svg_1.default,
-    avatarDefault: avatar_svg_1.default,
+    headerBackgroundURL: "../assets/headerBg.svg",
+    avatarDefault: "../assets/avatar.svg",
 };

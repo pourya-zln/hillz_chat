@@ -4,7 +4,7 @@ import { ChatProps } from "./types/chat.type"
 import ThemeProvider from "../../Theme/ThemeProvider"
 import { ChatModal } from "../ChatModal"
 import { CHChat } from "./components/Chat"
-import SocketContext from "lib/services/socket"
+import SocketContext from "../../services/socket"
 
 export const Chat = ({ dealershipOrigin, onButtonClick, theme }: ChatProps) => {
   const [showChat, setShowChat] = useState(false)

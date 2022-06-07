@@ -1,6 +1,3 @@
-import headerBg from "../assets/headerBg.svg"
-import avatar from "../assets/avatar.svg"
-
 export interface IDefaultTheme {
   colors: {
     primary: string
@@ -83,6 +80,6 @@ export const defaultTheme: IDefaultTheme = {
       lg: pxToRem(45),
     },
   },
-  headerBackgroundURL: headerBg,
-  avatarDefault: avatar,
+  headerBackgroundURL: "../assets/headerBg.svg",
+  avatarDefault: "../assets/avatar.svg",
 }

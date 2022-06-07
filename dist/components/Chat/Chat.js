@@ -43,7 +43,7 @@ var ChatButton_1 = require("../ChatButton");
 var ThemeProvider_1 = __importDefault(require("../../Theme/ThemeProvider"));
 var ChatModal_1 = require("../ChatModal");
 var Chat_1 = require("./components/Chat");
-var socket_1 = __importDefault(require("lib/services/socket"));
+var socket_1 = __importDefault(require("../../services/socket"));
 var Chat = function (_a) {
     var dealershipOrigin = _a.dealershipOrigin, onButtonClick = _a.onButtonClick, theme = _a.theme;
     var _b = (0, react_1.useState)(false), showChat = _b[0], setShowChat = _b[1];
