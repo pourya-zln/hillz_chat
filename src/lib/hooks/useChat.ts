@@ -13,11 +13,11 @@ const useChat = (
     socketRef.current = socket
 
     socketRef.current.on("message:get", (message: IMessage) => {
-      setMessages(() => [...messages, message])
+      setMessages([...messages, message])
     })
 
     socketRef.current?.on("messages:sendAll", (dataMessages) => {
-      setMessages(() => dataMessages)
+      setMessages(dataMessages)
     })
   }, [userId, socket, messages])
 

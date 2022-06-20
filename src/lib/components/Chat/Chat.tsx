@@ -1,4 +1,4 @@
-import React, { useState, MouseEvent, useContext, useCallback } from "react"
+import React, { useState, MouseEvent, useContext, useEffect, memo } from "react"
 import { ChatButton } from "../ChatButton"
 import { ChatProps } from "./types/chat.type"
 import ThemeProvider from "../../Theme/ThemeProvider"
@@ -11,15 +11,7 @@ export const Chat = ({ dealershipOrigin, onButtonClick, theme }: ChatProps) => {
   const { socket, setSocket } = useContext(SocketContext)
 
   const handleClick = (e: MouseEvent<HTMLButtonElement>) => {
-    socket.disconnect()
     setShowChat((prevShowChat) => !prevShowChat)
-
-    socket.auth = {
-      origin: dealershipOrigin,
-      sessionId: sessionStorage.getItem("sessionId"),
-    }
-
-    setSocket(socket.connect())
 
     onButtonClick && onButtonClick(e)
   }
@@ -40,7 +32,6 @@ export const Chat = ({ dealershipOrigin, onButtonClick, theme }: ChatProps) => {
     sessionId: number
     userId: number
   }) => {
-    console.log(sessionId, userId)
     socket.auth = { ...socket.auth, sessionId }
 
     sessionStorage.setItem("sessionId", `${sessionId}`)
@@ -50,6 +41,19 @@ export const Chat = ({ dealershipOrigin, onButtonClick, theme }: ChatProps) => {
   socket.on("session", handleSession)
   socket.on("connect_error", handleConnectionError)
   socket.on("disconnect", handleDisconnect)
+
+  useEffect(() => {
+    socket.auth = {
+      origin: dealershipOrigin,
+      sessionId: sessionStorage.getItem("sessionId"),
+    }
+
+    setSocket(() => socket.connect())
+  }, [dealershipOrigin, setSocket, socket])
+
+  useEffect(() => {
+    socket.emit("user:join")
+  }, [socket])
 
   return (
     <ThemeProvider theme={theme}>
@@ -61,4 +65,4 @@ export const Chat = ({ dealershipOrigin, onButtonClick, theme }: ChatProps) => {
   )
 }
 
-export default Chat
+export default memo(Chat)

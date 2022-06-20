@@ -9,7 +9,8 @@ interface ISocketContext {
 
 const socketIo = io("http://localhost:5000/client", {
   transports: ["websocket"],
-}).connect()
+  autoConnect: false,
+})
 
 export const SocketContext = createContext<ISocketContext>({
   socket: socketIo,
