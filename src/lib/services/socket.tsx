@@ -19,13 +19,7 @@ export const SocketContext = createContext<ISocketContext>({
 
 const SocketProvider = ({ children }: { children: React.ReactNode }) => {
   const [socket, setSocket] = useState<Socket>(socketIo)
-
   const value = useMemo(() => ({ socket, setSocket }), [socket])
-
-  // useEffect(() => {
-  //   setSocket((prevSocket) => prevSocket.connect())
-  //   console.log("Should be connected")
-  // }, [])
 
   return (
     <SocketContext.Provider value={value}>{children}</SocketContext.Provider>
