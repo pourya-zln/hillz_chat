@@ -73,10 +73,12 @@ export const ChatModal = (props: ChatModalProps) => {
   const handleSubmit = useCallback(
     (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault()
+      const roomId = sessionStorage.getItem("roomId") as string
+      const from = sessionStorage.getItem("userId") as string
 
       if (!message.trim()) return
 
-      sendMessage(message)
+      sendMessage(message, +roomId, +from)
 
       setShowEmoji(false)
       setMessage("")

@@ -28,14 +28,17 @@ export const Chat = ({ dealershipOrigin, onButtonClick, theme }: ChatProps) => {
   const handleSession = ({
     sessionId,
     userId,
+    roomId,
   }: {
     sessionId: number
     userId: number
+    roomId: number
   }) => {
     socket.auth = { ...socket.auth, sessionId }
 
     sessionStorage.setItem("sessionId", `${sessionId}`)
     sessionStorage.setItem("userId", `${userId}`)
+    sessionStorage.setItem("roomId", `${roomId}`)
   }
 
   socket.on("session", handleSession)

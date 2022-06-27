@@ -11,10 +11,13 @@ export interface AvatarProps {
 }
 
 export interface IMessage {
-  id: number
+  id: number | string
   message: string
   createdAt: string
   updatedAt: string
   roomId: number
   from: number
+  fromType: "USER" | "SYSTEM"
+  messageType: string
+  src: string | null
 }
